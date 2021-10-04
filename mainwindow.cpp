@@ -13,7 +13,9 @@ MainWindow::MainWindow(QWidget *parent)
     QImage imaMuros(Imag_NoBorr),imaLadrillos(Imag_Borr);
     QBrush brush1(imaMuros),brush2(imaLadrillos);
 
+    //personaje
 
+    personaje = scene->addEllipse(50,50,50,50);
 
     LecturaMapa();
     int posicion =0;
@@ -24,13 +26,17 @@ MainWindow::MainWindow(QWidget *parent)
                 muro.push_back(scene->addRect(j*50,i*50,50,50, pen,brush1));
             }
             else if(partMap[j+posicion] == 2){
-                scene->addRect(j*50,i*50,50,50,pen,brush2);
+                ladrillo.push_back(scene->addRect(j*50,i*50,50,50,pen,brush2));
             }
         }
         posicion+=longi;
     }
 
+    //QTimer *timer = new QTimer(this);
+    //connect( timer, SIGNAL(timeout()),this, SLOT());
+
     ui->graphicsView->setScene(scene);
+    ui->graphicsView->setSceneRect(0,0,700,700);
     ui->graphicsView->show();
 
 
@@ -79,5 +85,34 @@ void MainWindow::LecturaMapa()
     }
     archi.close();
 
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *e)
+{
+    static int PosX=0,PosY=0;
+
+    switch (e->key()){
+        case Qt::Key_A:
+            PosX-=10;
+            personaje->setPos(PosX,PosY);
+            break;
+
+        case Qt::Key_W:
+            PosY-=10;
+            personaje->setPos(PosX,PosY);
+            break;
+
+        case Qt::Key_D:
+            PosX+=10;
+            personaje->setPos(PosX,PosY);
+            break;
+
+        case Qt::Key_S:
+            PosY+=10;
+            personaje->setPos(PosX,PosY);
+            break;
+
+    }
+    //ui->graphicsView->setSceneRect(PosX-100,PosY-100,700,700);
 }
 
