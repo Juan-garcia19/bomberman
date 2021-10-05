@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Mapa/Texturas/rompible.png</file>
+    </qresource>
+</RCC>

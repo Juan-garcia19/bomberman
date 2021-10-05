@@ -12,8 +12,8 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     QPen pen;
-    QImage imaMuros(Imag_NoBorr),imaLadrillos(Imag_Borr);
-    QBrush brush1(imaMuros),brush2(imaLadrillos);
+    QImage imaMuros(Imag_NoBorr);
+    QBrush brush1(imaMuros);
 
     //personaje
     personaje = scene->addEllipse(55,55,30,30);
@@ -22,21 +22,27 @@ MainWindow::MainWindow(QWidget *parent)
 
     LecturaMapa();
     int posicion =0;
+
     for (int i = 0;i< cont ; i ++) {
+        Bricks *ladri;
         for ( int j = 0;j < longi ; j++){
 
             if (partMap[j+posicion] == 1){
                 muro.push_back(scene->addRect(j*50,i*50,50,50, pen,brush1));
             }
             else if(partMap[j+posicion] == 2){
-                ladrillo.push_back(scene->addRect(j*50,i*50,50,50,pen,brush2));
+                //ladrillo.push_back(scene->addRect(j*50,i*50,50,50,pen,brush2));
+                ladri = new Bricks(j*50,i*50,50,50);
+                scene->addItem(ladri);
+                ladrillos.push_back(ladri);
             }
+
         }
         posicion+=longi;
     }
 
 
-    //colisionador();
+    GeneradorPuerta();
 
 
 
@@ -91,6 +97,29 @@ void MainWindow::LecturaMapa()
 
 }
 
+void MainWindow::GeneradorPuerta()
+{
+    int longitud=ladrillos.size(),numA=0;
+    srand(time(NULL));
+
+    numA = 1 + rand() % ((longitud+1)-1);
+    qDebug()<<numA;
+
+    int cont=0;
+    for(auto parLadrillo:ladrillos){
+
+        if(cont==numA){
+            scene->addRect(parLadrillo->getPosX(),parLadrillo->getPosY(),40,40);
+            break;
+
+        }
+        cont++;
+    }
+
+
+
+}
+
 void MainWindow::colisionador()
 {
     static int timer = 0;
@@ -113,7 +142,7 @@ void MainWindow::colisionador()
                 }
             }
         }
-        for(auto parLadrillo : ladrillo){
+        for(auto parLadrillo : ladrillos){
             if( personaje->collidesWithItem(parLadrillo)){
                 if(tecla== 'A'){
                     PosX+=1;
@@ -141,30 +170,33 @@ void MainWindow::colisionador()
     if(bom == false){
         timer+=40;
         if(timer == (40*100) ){
-            QGraphicsRectItem *bombaD=scene->addRect(PosicionBomX+50,PosicionBomY,50,50);
-            QGraphicsRectItem *bombaW=scene->addRect(PosicionBomX,PosicionBomY-50,50,50);
-            QGraphicsRectItem *bombaA=scene->addRect(PosicionBomX-50,PosicionBomY,50,50);
-            QGraphicsRectItem *bombaS=scene->addRect(PosicionBomX,PosicionBomY+50,50,50);
+            QGraphicsRectItem *bombaD=scene->addRect(PosicionBomX+55,PosicionBomY+5,30,30);
+            ExpBoom[0] = bombaD;
+            QGraphicsRectItem *bombaW=scene->addRect(PosicionBomX+5,PosicionBomY-45,30,30);
+            ExpBoom[1] = bombaW;
+            QGraphicsRectItem *bombaA=scene->addRect(PosicionBomX-45,PosicionBomY+5,30,30);
+            ExpBoom[2] = bombaA;
+            QGraphicsRectItem *bombaS=scene->addRect(PosicionBomX+5,PosicionBomY+55,30,30);
+            ExpBoom[3] = bombaS;
 
-            for(auto parLadrillo = ladrillo.begin(); parLadrillo != ladrillo.end();){
-                if(bombaD->collidesWithItem(*parLadrillo)){
-                    //qDebug()<<"hola";
-                    delete *parLadrillo;
+            for(auto ondaBoom: ExpBoom){
+                for(auto parLadrillo = ladrillos.begin(); parLadrillo != ladrillos.end();){
 
-                    parLadrillo = ladrillo.erase(parLadrillo);
-                    break;
+                    if(ondaBoom->collidesWithItem(*parLadrillo)){
+                        //qDebug()<<ondaBoom->x() <<","<<ondaBoom->y();
+                        //qDebug()<<(*parLadrillo)->x() <<","<<(*parLadrillo)->x();
+                        delete *parLadrillo;
+
+                        parLadrillo = ladrillos.erase(parLadrillo);
+                        break;
+
+                    }
+                    else{
+                        ++parLadrillo;
+                    }
 
                 }
-                else{
-                    parLadrillo++;
-                }
-
-
-            //bomba=scene->addRect(PosicionBomX,PosicionBomY,50,50);
-            //bomba=scene->addRect(PosicionBomX,PosicionBomY,50,50);
-            //bomba=scene->addRect(PosicionBoamX,PosicionBomY,50,50);
-
-               }
+            }
 
             delete bombaD;
             delete bombaA;
@@ -212,10 +244,11 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
             tecla=' ';
 
             if(bom){
-                PosicionBomX =((PosX/50)*50)+50;
-                PosicionBomY =((PosY/50)*50)+50;
+                //PosicionBomX =((PosX/50)*50)+50;
+                PosicionBomX =((PosX/50)*50)+50;;
+                PosicionBomY =((PosY/50)*50)+50;;
 
-                bomba=scene->addRect(PosicionBomX,PosicionBomY,50,50);
+                bomba=scene->addRect(PosicionBomX+15,PosicionBomY+15,30,30);
                 bom=false;
             }
             break;

@@ -10,6 +10,10 @@
 #include <QTimer>
 #include <QKeyEvent>
 #include <QDebug>
+#include "bricks.h"
+
+#include <stdlib.h>
+#include <time.h>
 
 #define Imag_Borr "../Bomberman/Mapa/Texturas/rompible.png"
 #define Imag_NoBorr "../Bomberman/Mapa/Texturas/NoRompible.png"
@@ -28,6 +32,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void LecturaMapa();
+    void GeneradorPuerta();
 
 public slots:
     void colisionador();
@@ -38,12 +43,14 @@ private:
     QGraphicsScene *scene;
 
     vector <QGraphicsRectItem *> muro;
-    list <QGraphicsRectItem *> ladrillo;
-    array <QGraphicsRectItem,4> ExpBoom;
+    list <Bricks *> ladrillos;
+    list <QGraphicsEllipseItem *> enemigos;
+    array <QGraphicsRectItem *,4> ExpBoom;
     vector <int> partMap;
 
     QGraphicsEllipseItem *personaje;
     QGraphicsRectItem *bomba;
+    QGraphicsRectItem *puerta;
 
     bool bom=true;
     char tecla;
