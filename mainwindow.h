@@ -39,15 +39,18 @@ private:
 
     vector <QGraphicsRectItem *> muro;
     list <QGraphicsRectItem *> ladrillo;
+    array <QGraphicsRectItem,4> ExpBoom;
     vector <int> partMap;
 
     QGraphicsEllipseItem *personaje;
     QGraphicsRectItem *bomba;
 
-
+    bool bom=true;
     char tecla;
     int longi=0,cont=0;
     int PosX=0,PosY=0;
+    int PosicionBomX,PosicionBomY;
+
     int MovONo=1;
 
 

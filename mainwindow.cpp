@@ -34,7 +34,9 @@ MainWindow::MainWindow(QWidget *parent)
         }
         posicion+=longi;
     }
-    colisionador();
+
+
+    //colisionador();
 
 
 
@@ -91,62 +93,91 @@ void MainWindow::LecturaMapa()
 
 void MainWindow::colisionador()
 {
+    static int timer = 0;
     personaje->setPos(PosX,PosY);
     if (!scene->collidingItems(personaje).isEmpty()){
         MovONo=0;
         for (auto parMuro : muro){
             if( personaje->collidesWithItem(parMuro)){
                 if(tecla== 'A'){
-                    PosX+=2;
+                    PosX+=1;
                 }
                 else if(tecla=='W'){
-                    PosY+=2;
+                    PosY+=1;
                 }
                 else if(tecla=='D'){
-                    PosX-=2;
+                    PosX-=1;
                 }
                 else if(tecla=='S'){
-                    PosY-=2;
+                    PosY-=1;
                 }
             }
         }
         for(auto parLadrillo : ladrillo){
             if( personaje->collidesWithItem(parLadrillo)){
                 if(tecla== 'A'){
-                    PosX+=2;
+                    PosX+=1;
                 }
                 else if(tecla=='W'){
-                    PosY+=2;
+                    PosY+=1;
                 }
                 else if(tecla=='D'){
-                    PosX-=2;
+                    PosX-=1;
                 }
                 else if(tecla=='S'){
-                    PosY-=2;
+                    PosY-=1;
                 }
             }
         }
-        if( personaje->collidesWithItem(bomba)){
-            if(tecla== 'A'){
-                PosX+=2;
-            }
-            else if(tecla=='W'){
-                PosY+=2;
-            }
-            else if(tecla=='D'){
-                PosX-=2;
-            }
-            else if(tecla=='S'){
-                PosY-=2;
-            }
+        if( bomba!= NULL){
+            MovONo=1;
         }
-
     }
 
     else{
         MovONo=1;
     }
 
+    if(bom == false){
+        timer+=40;
+        if(timer == (40*100) ){
+            QGraphicsRectItem *bombaD=scene->addRect(PosicionBomX+50,PosicionBomY,50,50);
+            QGraphicsRectItem *bombaW=scene->addRect(PosicionBomX,PosicionBomY-50,50,50);
+            QGraphicsRectItem *bombaA=scene->addRect(PosicionBomX-50,PosicionBomY,50,50);
+            QGraphicsRectItem *bombaS=scene->addRect(PosicionBomX,PosicionBomY+50,50,50);
+
+            for(auto parLadrillo = ladrillo.begin(); parLadrillo != ladrillo.end();){
+                if(bombaD->collidesWithItem(*parLadrillo)){
+                    //qDebug()<<"hola";
+                    delete *parLadrillo;
+
+                    parLadrillo = ladrillo.erase(parLadrillo);
+                    break;
+
+                }
+                else{
+                    parLadrillo++;
+                }
+
+
+            //bomba=scene->addRect(PosicionBomX,PosicionBomY,50,50);
+            //bomba=scene->addRect(PosicionBomX,PosicionBomY,50,50);
+            //bomba=scene->addRect(PosicionBoamX,PosicionBomY,50,50);
+
+               }
+
+            delete bombaD;
+            delete bombaA;
+            delete bombaS;
+            delete bombaW;
+
+            delete bomba;
+            bom=true;
+            timer=0;
+            bomba=NULL;
+
+        }
+    }
 }
 
 
@@ -154,36 +185,40 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
 {
     if(MovONo){
         switch (e->key()){
-            case Qt::Key_A:
-                PosX-=10;
-                personaje->setPos(PosX,PosY);
-                tecla='A';
-                break;
+        case Qt::Key_A:
+            PosX-=10;
+            personaje->setPos(PosX,PosY);
+            tecla='A';
+            break;
 
-            case Qt::Key_W:
-                PosY-=10;
-                personaje->setPos(PosX,PosY);
-                tecla='W';
-                break;
+        case Qt::Key_W:
+            PosY-=10;
+            personaje->setPos(PosX,PosY);
+            tecla='W';
+            break;
 
-            case Qt::Key_D:
-                PosX+=10;
-                personaje->setPos(PosX,PosY);
-                tecla='D';
-                break;
+        case Qt::Key_D:
+            PosX+=10;
+            personaje->setPos(PosX,PosY);
+            tecla='D';
+            break;
 
-            case Qt::Key_S:
-                PosY+=10;
-                personaje->setPos(PosX,PosY);
-                tecla='S';
-                break;
-            case Qt::Key_Space:
-                tecla=' ';
-                int PosicionBomX =((PosX/50)*50)+50;
-                int PosicionBomY =((PosY/50)*50)+50;
+        case Qt::Key_S:
+            PosY+=10;
+            personaje->setPos(PosX,PosY);
+            tecla='S';
+            break;
+        case Qt::Key_Space:
+            tecla=' ';
+
+            if(bom){
+                PosicionBomX =((PosX/50)*50)+50;
+                PosicionBomY =((PosY/50)*50)+50;
 
                 bomba=scene->addRect(PosicionBomX,PosicionBomY,50,50);
-                break;
+                bom=false;
+            }
+            break;
 
 
         }
