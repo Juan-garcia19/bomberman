@@ -7,15 +7,18 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    scene = new QGraphicsScene();
+    scene = new QGraphicsScene(0,0,ui->graphicsView->width()-5,ui->graphicsView->height()-5);
+    ui->graphicsView->setScene(scene);
+
 
     QPen pen;
     QImage imaMuros(Imag_NoBorr),imaLadrillos(Imag_Borr);
     QBrush brush1(imaMuros),brush2(imaLadrillos);
 
     //personaje
+    personaje = scene->addEllipse(55,55,30,30);
 
-    personaje = scene->addEllipse(50,50,50,50);
+    scene->setFocusItem(personaje);
 
     LecturaMapa();
     int posicion =0;
@@ -31,14 +34,13 @@ MainWindow::MainWindow(QWidget *parent)
         }
         posicion+=longi;
     }
+    colisionador();
 
-    //QTimer *timer = new QTimer(this);
-    //connect( timer, SIGNAL(timeout()),this, SLOT());
 
-    ui->graphicsView->setScene(scene);
-    ui->graphicsView->setSceneRect(0,0,700,700);
-    ui->graphicsView->show();
 
+    QTimer *timer = new QTimer(this);
+    connect( timer, SIGNAL(timeout()),this, SLOT(colisionador()));
+    timer->start(40);
 
 
 
@@ -87,31 +89,104 @@ void MainWindow::LecturaMapa()
 
 }
 
+void MainWindow::colisionador()
+{
+    personaje->setPos(PosX,PosY);
+    if (!scene->collidingItems(personaje).isEmpty()){
+        MovONo=0;
+        for (auto parMuro : muro){
+            if( personaje->collidesWithItem(parMuro)){
+                if(tecla== 'A'){
+                    PosX+=2;
+                }
+                else if(tecla=='W'){
+                    PosY+=2;
+                }
+                else if(tecla=='D'){
+                    PosX-=2;
+                }
+                else if(tecla=='S'){
+                    PosY-=2;
+                }
+            }
+        }
+        for(auto parLadrillo : ladrillo){
+            if( personaje->collidesWithItem(parLadrillo)){
+                if(tecla== 'A'){
+                    PosX+=2;
+                }
+                else if(tecla=='W'){
+                    PosY+=2;
+                }
+                else if(tecla=='D'){
+                    PosX-=2;
+                }
+                else if(tecla=='S'){
+                    PosY-=2;
+                }
+            }
+        }
+        if( personaje->collidesWithItem(bomba)){
+            if(tecla== 'A'){
+                PosX+=2;
+            }
+            else if(tecla=='W'){
+                PosY+=2;
+            }
+            else if(tecla=='D'){
+                PosX-=2;
+            }
+            else if(tecla=='S'){
+                PosY-=2;
+            }
+        }
+
+    }
+
+    else{
+        MovONo=1;
+    }
+
+}
+
+
 void MainWindow::keyPressEvent(QKeyEvent *e)
 {
-    static int PosX=0,PosY=0;
+    if(MovONo){
+        switch (e->key()){
+            case Qt::Key_A:
+                PosX-=10;
+                personaje->setPos(PosX,PosY);
+                tecla='A';
+                break;
 
-    switch (e->key()){
-        case Qt::Key_A:
-            PosX-=10;
-            personaje->setPos(PosX,PosY);
-            break;
+            case Qt::Key_W:
+                PosY-=10;
+                personaje->setPos(PosX,PosY);
+                tecla='W';
+                break;
 
-        case Qt::Key_W:
-            PosY-=10;
-            personaje->setPos(PosX,PosY);
-            break;
+            case Qt::Key_D:
+                PosX+=10;
+                personaje->setPos(PosX,PosY);
+                tecla='D';
+                break;
 
-        case Qt::Key_D:
-            PosX+=10;
-            personaje->setPos(PosX,PosY);
-            break;
+            case Qt::Key_S:
+                PosY+=10;
+                personaje->setPos(PosX,PosY);
+                tecla='S';
+                break;
+            case Qt::Key_Space:
+                tecla=' ';
+                int PosicionBomX =((PosX/50)*50)+50;
+                int PosicionBomY =((PosY/50)*50)+50;
 
-        case Qt::Key_S:
-            PosY+=10;
-            personaje->setPos(PosX,PosY);
-            break;
+                bomba=scene->addRect(PosicionBomX,PosicionBomY,50,50);
+                break;
 
+
+        }
     }
     //ui->graphicsView->setSceneRect(PosX-100,PosY-100,700,700);
 }

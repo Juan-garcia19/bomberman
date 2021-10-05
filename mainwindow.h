@@ -9,6 +9,7 @@
 #include <vector>
 #include <QTimer>
 #include <QKeyEvent>
+#include <QDebug>
 
 #define Imag_Borr "../Bomberman/Mapa/Texturas/rompible.png"
 #define Imag_NoBorr "../Bomberman/Mapa/Texturas/NoRompible.png"
@@ -28,6 +29,9 @@ public:
     ~MainWindow();
     void LecturaMapa();
 
+public slots:
+    void colisionador();
+
 
 private:
     Ui::MainWindow *ui;
@@ -38,8 +42,14 @@ private:
     vector <int> partMap;
 
     QGraphicsEllipseItem *personaje;
+    QGraphicsRectItem *bomba;
 
-    int longi=0,cont;
+
+    char tecla;
+    int longi=0,cont=0;
+    int PosX=0,PosY=0;
+    int MovONo=1;
+
 
 
 protected:
