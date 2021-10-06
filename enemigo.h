@@ -23,9 +23,11 @@ protected slots:
 private:
     void colision();
 
+    //char mov;
+
     int PosX, PosY;
     int Ancho, Largo;
-    int velocidad = 10;
+    //int velocidad = 10;
 };
 
 #endif // ENEMIGO_H

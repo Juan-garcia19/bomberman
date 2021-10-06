@@ -22,37 +22,62 @@ void Enemigo::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget
 
 void Enemigo::advance(int phase)
 {
-    if(! phase) return;
     static char mov = 'W';
-    //QPointF location = this->pos();
-    setPos(mapToParent(0,velocidad)));
+    static int velocidad =10;
+    static bool flag=false;
 
-    if( mov == 'W'){
-        setPos(mapToParent(0,-(velocidad)));
+    if(flag){
         if(!scene()->collidingItems(this).isEmpty()){
-           mov ='D';
+            switch(mov){
+                case 'S':
+                    setPos(mapToParent(0,-10));
+                    mov = 'D';
+                break;
+                case 'W':
+                    setPos(mapToParent(0,10));
+                    mov='S';
+
+
+
+                break;
+                case 'D':
+                    setPos(mapToParent(-10,0));
+                    mov='A';
+
+
+                break;
+                case 'A':
+                    setPos(mapToParent(10,0));
+                    mov='W';
+                break;
+            }
+
+
+        }
+        else{
+            switch(mov){
+                case 'S':
+                    setPos(mapToParent(0,10));
+
+                break;
+                case 'W':
+                    setPos(mapToParent(0,-10));
+
+                break;
+                case 'D':
+                    setPos(mapToParent(10,0));
+                break;
+                case 'A':
+                    setPos(mapToParent(-10,0));
+                break;
+            }
         }
     }
-    else if(mov == 'D'){
-        setPos(mapToParent(velocidad,0));
-        if(!scene()->collidingItems(this).isEmpty()){
-           mov ='S';
-        }
+    else{
+      //setPos(mapToParent(-10,0));
+      flag=true;
+      mov='S';
     }
-    else if(mov == 'S'){
-        setPos(mapToParent(0,velocidad));
-        if(!scene()->collidingItems(this).isEmpty()){
-           mov ='A';
-        }
-    }
-    else if(mov == 'A'){
-        setPos(mapToParent(-(velocidad),0));
-        if(!scene()->collidingItems(this).isEmpty()){
-           mov ='W';
-        }
-    }
-    //setPos(mapToParent(velocidad,0));
-    //colision();
 
 
 
@@ -61,10 +86,7 @@ void Enemigo::advance(int phase)
 
 void Enemigo::colision()
 {
-    if (!scene()->collidingItems(this).isEmpty()){
-        QPointF location = this->pos();
-        setPos(mapToParent(0,-velocidad));
-    }
+
 }
 
 int Enemigo::getPosX() const

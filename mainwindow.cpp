@@ -32,13 +32,13 @@ MainWindow::MainWindow(QWidget *parent)
                 muro.push_back(scene->addRect(j*50,i*50,50,50, pen,brush1));
             }
             else if(partMap[j+posicion] == 2){
-                //ladrillo.push_back(scene->addRect(j*50,i*50,50,50,pen,brush2));
+
                 ladri = new Bricks(j*50,i*50,50,50);
                 scene->addItem(ladri);
                 ladrillos.push_back(ladri);
             }
             else if(partMap[j+posicion] == 3){
-                evil= new Enemigo((j*50)+15,(i*50)+15,30,30);
+                evil= new Enemigo((j*50)+10,(i*50)+10,30,30);
                 scene->addItem(evil);
                 enemigos.push_back(evil);
             }
@@ -58,7 +58,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     QTimer *timeE = new QTimer(this);
     connect( timeE, SIGNAL(timeout()),scene, SLOT(advance()));
-    timeE->start(1000);
+    timeE->start(100);
 
 
 
@@ -255,7 +255,7 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
             tecla=' ';
 
             if(bom){
-                //PosicionBomX =((PosX/50)*50)+50;
+
                 PosicionBomX =((PosX/50)*50)+50;;
                 PosicionBomY =((PosY/50)*50)+50;;
 
@@ -267,6 +267,6 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
 
         }
     }
-    //ui->graphicsView->setSceneRect(PosX-100,PosY-100,700,700);
+    ui->graphicsView->setSceneRect(PosX-100,PosY-100,700,700);
 }
 
