@@ -10,7 +10,9 @@
 #include <QTimer>
 #include <QKeyEvent>
 #include <QDebug>
+
 #include "bricks.h"
+#include "enemigo.h"
 
 #include <stdlib.h>
 #include <time.h>
@@ -44,7 +46,7 @@ private:
 
     vector <QGraphicsRectItem *> muro;
     list <Bricks *> ladrillos;
-    list <QGraphicsEllipseItem *> enemigos;
+    list <Enemigo *> enemigos;
     array <QGraphicsRectItem *,4> ExpBoom;
     vector <int> partMap;
 

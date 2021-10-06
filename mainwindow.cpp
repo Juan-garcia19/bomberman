@@ -25,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     for (int i = 0;i< cont ; i ++) {
         Bricks *ladri;
+        Enemigo *evil;
         for ( int j = 0;j < longi ; j++){
 
             if (partMap[j+posicion] == 1){
@@ -35,6 +36,11 @@ MainWindow::MainWindow(QWidget *parent)
                 ladri = new Bricks(j*50,i*50,50,50);
                 scene->addItem(ladri);
                 ladrillos.push_back(ladri);
+            }
+            else if(partMap[j+posicion] == 3){
+                evil= new Enemigo((j*50)+15,(i*50)+15,30,30);
+                scene->addItem(evil);
+                enemigos.push_back(evil);
             }
 
         }
@@ -49,6 +55,10 @@ MainWindow::MainWindow(QWidget *parent)
     QTimer *timer = new QTimer(this);
     connect( timer, SIGNAL(timeout()),this, SLOT(colisionador()));
     timer->start(40);
+
+    QTimer *timeE = new QTimer(this);
+    connect( timeE, SIGNAL(timeout()),scene, SLOT(advance()));
+    timeE->start(1000);
 
 
 
@@ -210,6 +220,7 @@ void MainWindow::colisionador()
 
         }
     }
+
 }
 
 
